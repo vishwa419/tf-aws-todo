@@ -21,12 +21,8 @@ spec:
         volumeMounts:
         - name: db-storage
           mountPath: /var/lib/postgresql/data
-  volumeClaimTemplates:
-  - metadata:
-      name: db-storage
-    spec:
-      accessModes: ["ReadWriteOnce"]
-      resources:
-        requests:
-          storage: {{ .Values.storage }}
+  volumeMounts:
+  - name: db-storage
+  mountPath: /var/lib/postgresql/data
+# remove volumeClaimTemplates
 
