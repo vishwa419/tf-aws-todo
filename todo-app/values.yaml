@@ -1,0 +1,25 @@
+frontend:
+  image:
+    repository: nginx
+    tag: latest
+  replicas: 1
+
+backend:
+  image:
+    repository: my-backend-image
+    tag: latest
+  replicas: 1
+
+db:
+  image:
+    repository: postgres
+    tag: latest
+  storage: 1Gi
+  replicas: 1
+
+queue:
+  image:
+    repository: rabbitmq
+    tag: latest
+  replicas: 1
+

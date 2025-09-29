@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "queue.fullname" . }}
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      app: {{ include "queue.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "queue.name" . }}
+    spec:
+      containers:
+      - name: queue
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        ports:
+        - containerPort: 5672
+
