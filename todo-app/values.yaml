@@ -3,25 +3,55 @@ frontend:
     repository: nginx
     tag: latest
   replicas: 1
+  resources:
+    requests:
+      cpu: 10m
+      memory: 32Mi
+    limits:
+      cpu: 50m
+      memory: 64Mi
 
 backend:
   image:
     repository: my-backend-image
     tag: latest
   replicas: 1
+  resources:
+    requests:
+      cpu: 20m
+      memory: 64Mi
+    limits:
+      cpu: 100m
+      memory: 128Mi
 
 db:
   image:
     repository: postgres
     tag: latest
-  storage: 1Gi
   replicas: 1
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+  # IMPORTANT: use emptyDir for free-tier (no PVCs)
+  persistence:
+    enabled: false
 
 queue:
   image:
     repository: rabbitmq
     tag: latest
   replicas: 1
+  resources:
+    requests:
+      cpu: 20m
+      memory: 64Mi
+    limits:
+      cpu: 100m
+      memory: 128Mi
 
 service:
   type: ClusterIP
