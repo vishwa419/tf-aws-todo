@@ -25,4 +25,6 @@ spec:
   - name: db-storage
   mountPath: /var/lib/postgresql/data
 # remove volumeClaimTemplates
-
+  volumes:
+  - name: db-storage
+    emptyDir: {}
