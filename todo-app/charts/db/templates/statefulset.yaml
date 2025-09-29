@@ -21,6 +21,7 @@ spec:
         volumeMounts:
         - name: db-storage
           mountPath: /var/lib/postgresql/data
+          subPath: postgres-data
       volumes:
       - name: db-storage
         emptyDir: {}
