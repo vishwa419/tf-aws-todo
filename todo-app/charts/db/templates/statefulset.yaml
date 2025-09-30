@@ -1,35 +1,40 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: todo-app-db
+  name: db
 spec:
-  serviceName: todo-app-db
+  serviceName: "db"
   replicas: 1
   selector:
     matchLabels:
-      app: todo-app-db
+      app: db
   template:
     metadata:
       labels:
-        app: todo-app-db
+        app: db
     spec:
       containers:
-      - name: db
-        image: postgres:latest
-        ports:
-        - containerPort: 5432
-        env:
-        - name: POSTGRES_USER
-          value: "todo"
-        - name: POSTGRES_PASSWORD
-          value: "todo123"
-        - name: POSTGRES_DB
-          value: "tododb"
-        volumeMounts:
-        - name: db-storage
-          mountPath: /var/lib/postgresql/data
-          subPath: data   # 👈 Fix: mount into subdirectory
-      volumes:
-      - name: db-storage
-        emptyDir: {}       # 👈 ephemeral storage (not PV/PVC)
+        - name: db
+          image: postgres:latest
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_USER
+              value: "todo"
+            - name: POSTGRES_PASSWORD
+              value: "todo123"
+            - name: POSTGRES_DB
+              value: "tododb"
+          volumeMounts:
+            - name: db-storage
+              mountPath: /var/lib/postgresql/data
+              subPath: data
+  volumeClaimTemplates:
+    - metadata:
+        name: db-storage
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 1Gi
 
