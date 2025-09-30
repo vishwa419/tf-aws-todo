@@ -21,9 +21,5 @@ spec:
         volumeMounts:
         - name: db-storage
           mountPath: /var/lib/postgresql/data
-  volumeClaimTemplates: [] # remove this
-  # Instead, define the volume directly in the pod spec:
-  # But in StatefulSets, "volumes:" under template.spec is ignored for PVCs, 
-  # so you must use the PVC name in volumeMounts
-  # This is done already by matching volumeMount name to the existing PVC
+  volumeClaimTemplates: [] # leave empty if using a pre-existing PVC
 
