@@ -8,5 +8,5 @@ spec:
   resources:
     requests:
       storage: 1Gi
-  volumeName: db-pv   # <- reference the pre-created PV
+  volumeName: db-pv-1   # <- reference the pre-created PV
 
