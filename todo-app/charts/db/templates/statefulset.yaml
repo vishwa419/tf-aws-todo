@@ -1,42 +1,34 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ include "db.fullname" . }}
+  name: todo-app-db
 spec:
-  serviceName: {{ include "db.fullname" . }}
-  replicas: {{ .Values.replicaCount | default $.Values.db.replicas }}
+  serviceName: todo-app-db
+  replicas: 1
   selector:
     matchLabels:
-      app: {{ include "db.name" . }}
+      app: todo-app-db
   template:
     metadata:
       labels:
-        app: {{ include "db.name" . }}
+        app: todo-app-db
     spec:
       containers:
       - name: db
-        image: "{{ .Values.image.repository | default $.Values.db.image.repository }}:{{ .Values.image.tag | default $.Values.db.image.tag }}"
+        image: postgres:latest
         ports:
         - containerPort: 5432
-        {{- if or .Values.persistence.enabled $.Values.db.persistence }}
+        resources:
+          requests:
+            cpu: 50m
+            memory: 128Mi
+          limits:
+            cpu: 200m
+            memory: 256Mi
         volumeMounts:
         - name: db-storage
           mountPath: /var/lib/postgresql/data
-        {{- end }}
-  {{- if or .Values.persistence.enabled $.Values.db.persistence }}
-  volumeClaimTemplates:
-  - metadata:
-      name: db-storage
-    spec:
-      accessModes: ["ReadWriteOnce"]
-      resources:
-        requests:
-          storage: {{ .Values.persistence.storage | default $.Values.db.storage }}
-  {{- else }}
-  template:
-    spec:
       volumes:
       - name: db-storage
         emptyDir: {}
-  {{- end }}
 
