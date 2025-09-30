@@ -38,7 +38,7 @@ db:
       memory: 256Mi
   # IMPORTANT: use emptyDir for free-tier (no PVCs)
   persistence:
-    enabled: true
+    enabled: false
 
 queue:
   image:
