@@ -4,7 +4,7 @@ metadata:
   name: {{ include "db.fullname" . }}
 spec:
   serviceName: {{ include "db.fullname" . }}
-  replicas: {{ .Values.replicas }}
+  replicas: {{ .Values.db.replicas }}
   selector:
     matchLabels:
       app: {{ include "db.name" . }}
@@ -15,12 +15,13 @@ spec:
     spec:
       containers:
       - name: db
-        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        image: "{{ .Values.db.image.repository }}:{{ .Values.db.image.tag }}"
         ports:
         - containerPort: 5432
         volumeMounts:
         - name: db-storage
           mountPath: /var/lib/postgresql/data
+  {{- if .Values.db.persistence.enabled }}
   volumeClaimTemplates:
   - metadata:
       name: db-storage
@@ -28,5 +29,12 @@ spec:
       accessModes: ["ReadWriteOnce"]
       resources:
         requests:
-          storage: {{ .Values.storage }}
+          storage: 1Gi
+  {{- else }}
+  template:
+    spec:
+      volumes:
+      - name: db-storage
+        emptyDir: {}
+  {{- end }}
 
