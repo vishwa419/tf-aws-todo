@@ -14,27 +14,21 @@ spec:
         app: db
     spec:
       containers:
-        - name: db
-          image: postgres:latest
+        - name: postgres
+          image: postgres:16
           ports:
             - containerPort: 5432
+              name: postgres
           env:
             - name: POSTGRES_USER
-              value: "todo"
+              value: "admin"
             - name: POSTGRES_PASSWORD
-              value: "todo123"
+              value: "password"
             - name: POSTGRES_DB
               value: "tododb"
           volumeMounts:
             - name: db-storage
               mountPath: /var/lib/postgresql/data
-              subPath: data
-  volumeClaimTemplates:
-    - metadata:
-        name: db-storage
-      spec:
-        accessModes: [ "ReadWriteOnce" ]
-        resources:
-          requests:
-            storage: 1Gi
-
+      volumes:
+        - name: db-storage
+          emptyDir: {}
