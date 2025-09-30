@@ -2,11 +2,9 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: {{ include "db.fullname" . }}
-  labels:
-    app: {{ include "db.name" . }}
 spec:
   serviceName: {{ include "db.fullname" . }}
-  replicas: {{ .Values.db.replicas }}
+  replicas: {{ .Values.replicaCount | default $.Values.db.replicas }}
   selector:
     matchLabels:
       app: {{ include "db.name" . }}
@@ -17,33 +15,28 @@ spec:
     spec:
       containers:
       - name: db
-        image: "{{ .Values.db.image.repository }}:{{ .Values.db.image.tag }}"
+        image: "{{ .Values.image.repository | default $.Values.db.image.repository }}:{{ .Values.image.tag | default $.Values.db.image.tag }}"
         ports:
         - containerPort: 5432
-        resources:
-          requests:
-            cpu: {{ .Values.db.resources.requests.cpu }}
-            memory: {{ .Values.db.resources.requests.memory }}
-          limits:
-            cpu: {{ .Values.db.resources.limits.cpu }}
-            memory: {{ .Values.db.resources.limits.memory }}
+        {{- if or .Values.persistence.enabled $.Values.db.persistence }}
         volumeMounts:
         - name: db-storage
           mountPath: /var/lib/postgresql/data
-{{- if not .Values.db.persistence.enabled }}
+        {{- end }}
+  {{- if or .Values.persistence.enabled $.Values.db.persistence }}
+  volumeClaimTemplates:
+  - metadata:
+      name: db-storage
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: {{ .Values.persistence.storage | default $.Values.db.storage }}
+  {{- else }}
+  template:
+    spec:
       volumes:
       - name: db-storage
         emptyDir: {}
-{{- end }}
-
-{{- if .Values.db.persistence.enabled }}
-volumeClaimTemplates:
-- metadata:
-    name: db-storage
-  spec:
-    accessModes: ["ReadWriteOnce"]
-    resources:
-      requests:
-        storage: 1Gi
-{{- end }}
+  {{- end }}
 
