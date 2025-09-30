@@ -18,14 +18,18 @@ spec:
         image: postgres:latest
         ports:
         - containerPort: 5432
+        env:
+        - name: POSTGRES_USER
+          value: "todo"
+        - name: POSTGRES_PASSWORD
+          value: "todo123"
+        - name: POSTGRES_DB
+          value: "tododb"
         volumeMounts:
         - name: db-storage
           mountPath: /var/lib/postgresql/data
-          subPath: data
-        securityContext:
-      	  runAsUser: 999
-          fsGroup: 999
+          subPath: data   # 👈 Fix: mount into subdirectory
       volumes:
       - name: db-storage
-        emptyDir: {}
+        emptyDir: {}       # 👈 ephemeral storage (not PV/PVC)
 
